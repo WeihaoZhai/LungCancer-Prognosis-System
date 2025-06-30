@@ -1621,7 +1621,30 @@ def run_selected_analysis():
             status.update(label="✅ Analysis completed successfully!", state="complete", expanded=False)
             
         except Exception as e:
-            st.error(f"❌ Error during analysis: {str(e)}")
+            error_msg = str(e)
+            # Check if this is a feature mismatch error (wrong model for data type)
+            if "not in index" in error_msg or "KeyError" in str(type(e)):
+                st.error("❌ Error during analysis. Choose the Right Analysing Model!")
+                st.warning("💡 **Tip:** Make sure you've selected the correct analysis type for your data:")
+                st.markdown("""
+                - **PFS Analysis**: Use for Progression-Free Survival data
+                - **OS Analysis**: Use for Overall Survival data
+                
+                The uploaded data might be designed for a different analysis type.
+                """)
+                
+                # Suggest switching analysis type
+                col_switch1, col_switch2 = st.columns(2)
+                with col_switch1:
+                    if st.button("🔄 Try OS Analysis Instead", use_container_width=True):
+                        st.session_state['selected_analysis'] = 'OS'
+                        st.rerun()
+                with col_switch2:
+                    if st.button("🔄 Try PFS Analysis Instead", use_container_width=True):
+                        st.session_state['selected_analysis'] = 'PFS'
+                        st.rerun()
+            else:
+                st.error(f"❌ Error during analysis: {error_msg}")
             return
     
     # Auto-advance to results
