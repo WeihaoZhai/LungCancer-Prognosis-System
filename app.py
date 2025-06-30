@@ -625,7 +625,7 @@ def load_model(model_path):
                 model_package.feature_names is None or
                 model_package.scaler_params is None):
                 raise ValueError("Simple model package parameters incomplete, possibly empty or corrupted package")
-            # 检查模型类型来选择正确的重构器
+            # Check model type to select the correct reconstructor
             if "HRPFS" in model_path or "PFS" in model_path:
                 return HRPFSModelReconstructor(model_package)
             else:
@@ -755,17 +755,17 @@ def plot_risk_scores(risk_scores, risk_groups, patient_ids):
 
 
 def generate_individual_survival_curve(survival_probs, time_points, patient_id):
-    """生成并显示生存曲线"""
+    """Generate and display survival curve"""
     plt.style.use('seaborn-v0_8-whitegrid')
     fig, ax = plt.subplots(figsize=(12, 8))
 
-    # 绘制曲线（保持原有代码不变）
+    # Draw curve (keep original code unchanged)
     ax.plot(time_points, survival_probs,
             linewidth=4, color='#2E86AB', marker='o', markersize=8,
             markerfacecolor='white', markeredgecolor='#2E86AB',
             markeredgewidth=2, alpha=0.9, label=f'Patient {patient_id}')
 
-    # 添加关键时间点标注（保持原有代码不变）
+    # Add key time point annotations (keep original code unchanged)
     key_times = [12, 24, 36, 60]
     for t in key_times:
         if t <= max(time_points):
@@ -778,7 +778,7 @@ def generate_individual_survival_curve(survival_probs, time_points, patient_id):
                         fontsize=10, fontweight='bold', ha='center',
                         bbox=dict(boxstyle='round,pad=0.3', facecolor='yellow', alpha=0.7))
 
-    # 设置图表属性（保持原有代码不变）
+    # Set chart properties (keep original code unchanged)
     ax.set_xlabel('Time (months)', fontsize=14, fontweight='bold')
     ax.set_ylabel('Progression-Free Survival Probability', fontsize=14, fontweight='bold')
     ax.set_title(f'Patient {patient_id} Personalized Progression-Free Survival Curve\n(HRPFS Model)',
@@ -1026,17 +1026,17 @@ def patient_management_interface():
                 st.markdown("#### Risk Distribution")
                 fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
                 
-                # Risk group pie chart - 确保颜色对应正确
+                # Risk group pie chart - ensure correct color mapping
                 risk_labels = list(risk_counts.keys())
                 risk_values = list(risk_counts.values())
                 risk_colors = []
                 
-                # 根据风险等级分配颜色：High Risk=红色，Low Risk=绿色
+                # Assign colors based on risk level: High Risk=red, Low Risk=green
                 for label in risk_labels:
                     if 'High Risk' in label:
-                        risk_colors.append('#ff4757')  # 红色
+                        risk_colors.append('#ff4757')  # red
                     else:
-                        risk_colors.append('#2ed573')  # 绿色
+                        risk_colors.append('#2ed573')  # green
                 
                 ax1.pie(risk_values, labels=risk_labels, autopct='%1.1f%%', colors=risk_colors)
                 ax1.set_title('Risk Group Distribution')
@@ -1222,7 +1222,7 @@ def show_data_upload():
                     st.session_state['current_patient_selection'] = selected_patients
             
             # Debug info (can be removed later)
-            if st.checkbox("🔧 Show Debug Info", help="显示调试信息"):
+            if st.checkbox("🔧 Show Debug Info", help="Show debugging information"):
                 st.write("**Debug Information:**")
                 st.write(f"- session_state['current_patient_selection']: {st.session_state.get('current_patient_selection', 'Not set')}")
                 st.write(f"- selected_patients from multiselect: {selected_patients}")
@@ -1299,9 +1299,7 @@ def show_data_upload():
             <h4>📋 Data Requirements</h4>
             <ul>
                 <li><strong>name:</strong> Patient identifier</li>
-                <li><strong>Status:</strong> Event occurrence (0/1)</li>
-                <li><strong>Time:</strong> Time to event/censoring</li>
-                <li><strong>Features:</strong> Clinical/imaging variables</li>
+                <li><strong>Features:</strong> Clinical/imaging features</li>
             </ul>
         </div>
         ''', unsafe_allow_html=True)
@@ -1633,17 +1631,17 @@ def run_selected_analysis():
             
             if is_feature_error:
                 st.error("❌ Error during analysis. Choose the Right Analysing Model!")
-                st.warning("💡 **提示:** 请确保为您的数据选择了正确的分析类型:")
+                st.warning("💡 **Tip:** Make sure you've selected the correct analysis type for your data:")
                 st.markdown("""
-                - **PFS Analysis**: 用于无进展生存分析数据
-                - **OS Analysis**: 用于总体生存分析数据
+                - **PFS Analysis**: Use for Progression-Free Survival data
+                - **OS Analysis**: Use for Overall Survival data
                 
-                上传的数据可能是为不同的分析类型设计的。
+                The uploaded data might be designed for a different analysis type.
                 """)
                 
                 # Show what analysis was attempted
                 current_analysis = st.session_state.get('selected_analysis', 'Unknown')
-                st.info(f"📊 当前尝试的分析类型: **{current_analysis} Analysis**")
+                st.info(f"📊 Current analysis type attempted: **{current_analysis} Analysis**")
                 
                 # Suggest switching analysis type
                 col_switch1, col_switch2 = st.columns(2)
@@ -1657,7 +1655,7 @@ def run_selected_analysis():
                         st.rerun()
                         
                 # Show detailed error for debugging (collapsible)
-                with st.expander("🔧 显示详细错误信息 (用于调试)", expanded=False):
+                with st.expander("🔧 Show detailed error info (for debugging)", expanded=False):
                     st.code(error_msg)
             else:
                 st.error(f"❌ Error during analysis: {error_msg}")
