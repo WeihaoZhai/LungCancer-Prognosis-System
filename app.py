@@ -1367,10 +1367,9 @@ def show_analysis_selection():
         <div class="analysis-card">
             <h4>📈 OS Analysis Features:</h4>
             <ul>
-                <li>Mortality risk assessment</li>
-                <li>Long-term survival curves</li>
-                <li>Feature impact analysis</li>
-                <li>Clinical decision support</li>
+                <li>Risk stratification</li>
+                <li>Survival probability curves</li>
+                <li>Personalized predictions</li>
             </ul>
         </div>
         ''', unsafe_allow_html=True)
