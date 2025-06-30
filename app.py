@@ -1623,15 +1623,28 @@ def run_selected_analysis():
         except Exception as e:
             error_msg = str(e)
             # Check if this is a feature mismatch error (wrong model for data type)
-            if "not in index" in error_msg or "KeyError" in str(type(e)):
+            # Look for common patterns in feature mismatch errors
+            is_feature_error = (
+                "not in index" in error_msg or 
+                "KeyError" in str(type(e)) or 
+                isinstance(e, KeyError) or
+                ("CT_habitat" in error_msg and "PET_habitat" in error_msg) or
+                (any(keyword in error_msg for keyword in ["SUVmax", "Gender", "CT_habitat", "PET_habitat"]))
+            )
+            
+            if is_feature_error:
                 st.error("❌ Error during analysis. Choose the Right Analysing Model!")
-                st.warning("💡 **Tip:** Make sure you've selected the correct analysis type for your data:")
+                st.warning("💡 **提示:** 请确保为您的数据选择了正确的分析类型:")
                 st.markdown("""
-                - **PFS Analysis**: Use for Progression-Free Survival data
-                - **OS Analysis**: Use for Overall Survival data
+                - **PFS Analysis**: 用于无进展生存分析数据
+                - **OS Analysis**: 用于总体生存分析数据
                 
-                The uploaded data might be designed for a different analysis type.
+                上传的数据可能是为不同的分析类型设计的。
                 """)
+                
+                # Show what analysis was attempted
+                current_analysis = st.session_state.get('selected_analysis', 'Unknown')
+                st.info(f"📊 当前尝试的分析类型: **{current_analysis} Analysis**")
                 
                 # Suggest switching analysis type
                 col_switch1, col_switch2 = st.columns(2)
@@ -1643,6 +1656,10 @@ def run_selected_analysis():
                     if st.button("🔄 Try PFS Analysis Instead", use_container_width=True):
                         st.session_state['selected_analysis'] = 'PFS'
                         st.rerun()
+                        
+                # Show detailed error for debugging (collapsible)
+                with st.expander("🔧 显示详细错误信息 (用于调试)", expanded=False):
+                    st.code(error_msg)
             else:
                 st.error(f"❌ Error during analysis: {error_msg}")
             return
